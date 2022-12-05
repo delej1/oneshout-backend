@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shouts",
+  "info": {
+    "singularName": "shout",
+    "pluralName": "shouts",
+    "displayName": "shout"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "recipients": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "senderPhone": {
+      "type": "string"
+    },
+    "senderName": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "string"
+    },
+    "longitude": {
+      "type": "string"
+    },
+    "sent": {
+      "type": "string"
+    }
+  }
+}
