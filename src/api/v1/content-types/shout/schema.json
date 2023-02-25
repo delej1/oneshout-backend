@@ -4,7 +4,8 @@
   "info": {
     "singularName": "shout",
     "pluralName": "shouts",
-    "displayName": "shout"
+    "displayName": "shout",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -20,12 +21,6 @@
     "message": {
       "type": "string"
     },
-    "senderPhone": {
-      "type": "string"
-    },
-    "senderName": {
-      "type": "string"
-    },
     "latitude": {
       "type": "string"
     },
@@ -34,6 +29,20 @@
     },
     "sent": {
       "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "shouts"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "help",
+        "notify",
+        "panic"
+      ]
     }
   }
 }

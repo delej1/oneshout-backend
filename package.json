@@ -2,7 +2,7 @@
   "name": "simalert-api",
   "private": true,
   "version": "0.1.0",
-  "description": "A Strapi application",
+  "description": "One Shout API",
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
@@ -11,14 +11,15 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "@strapi/plugin-i18n": "4.5.2",
-    "@strapi/plugin-users-permissions": "4.5.2",
-    "@strapi/strapi": "4.5.2",
+    "@strapi/plugin-i18n": "4.6.0",
+    "@strapi/plugin-users-permissions": "4.6.0",
+    "@strapi/strapi": "4.6.0",
     "pg": "8.6.0",
-    "strapi-plugin-io": "^1.1.4"
+    "socket.io": "^4.6.0",
+    "@tochie/vscore": "^0.0.5"
   },
   "author": {
-    "name": "A Strapi developer"
+    "name": "Tochie Daniels"
   },
   "strapi": {
     "uuid": "f6a59c96-c571-4a24-8131-d66641946cb8"
@@ -27,5 +28,8 @@
     "node": ">=14.19.1 <=18.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "workspaces": [
+    "src/plugins/*"
+  ]
 }
