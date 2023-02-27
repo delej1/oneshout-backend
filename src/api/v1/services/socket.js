@@ -14,15 +14,6 @@ module.exports = {
       noServer: true,
     });
 
-    // io.use((socket, next) => {
-    //   const userId = socket.handshake.auth.userId;
-    //   if (!userId) {
-    //     return next(new Error("invalid userId"));
-    //   }
-    //   socket.userId = userId;
-    //   next();
-    // });
-
     io.on("connection", function (socket) {
       const query = socket.handshake.query;
       console.log("Connect", query);
