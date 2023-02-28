@@ -18,12 +18,17 @@ module.exports = {
       const query = socket.handshake.query;
       console.log("Connect", query);
 
-      socket.on("position-change", async (data) => {
+      socket.on("position-change", async (data, callback) => {
         const d = JSON.parse(data);
         console.log(d);
         // let x = await strapi.query("api::shout.shout").findMany();
         // console.log(x);
-        io.emit(d.channel, data);
+        const sockets = await io.in(d.channel).fetchSockets();
+        console.log(sockets.length);
+
+        io.emit(d.channel, { data });
+        callback(sockets.length);
+        socket.emit("location-sent", sockets.length);
       });
 
       socket.on("disconnect", () => {});
@@ -40,6 +45,7 @@ module.exports = {
           console.log("An error occurred: No channel to join.");
         }
       });
+
       socket.on("help", ({ username }) => {
         // Listening for a join connection
         console.log("user connected");
