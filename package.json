@@ -18,6 +18,8 @@
     "@tochie/vscore": "^0.0.5",
     "api": "^5.0.7",
     "pg": "8.6.0",
+    "referral-codes": "^2.0.3",
+    "sendchamp-sdk": "^1.0.8",
     "socket.io": "^4.6.0"
   },
   "author": {

@@ -3357,6 +3357,13 @@ axios@1.2.2:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
+axios@^0.21.1:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
+  integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
+  dependencies:
+    follow-redirects "^1.14.0"
+
 axios@^0.27.2:
   version "0.27.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
@@ -5763,7 +5770,7 @@ fn.name@1.x.x:
   resolved "https://registry.npmjs.org/fn.name/-/fn.name-1.1.0.tgz"
   integrity sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
 
-follow-redirects@^1.0.0, follow-redirects@^1.14.9, follow-redirects@^1.15.0:
+follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.9, follow-redirects@^1.15.0:
   version "1.15.2"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
@@ -9892,6 +9899,11 @@ redux@^4.1.2:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
+referral-codes@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/referral-codes/-/referral-codes-2.0.3.tgz#07f3bc5a19b12ac6029fd8001077b0e4ab30c0eb"
+  integrity sha512-e66vOVnq7as2YH4fwaakd946VegbPCkivxkTKzcFn6q8tqgDeH03xY3gorIBPVzAWc3pqS+1cQGXDHuvE0t2aQ==
+
 reftools@^1.1.9:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/reftools/-/reftools-1.1.9.tgz#e16e19f662ccd4648605312c06d34e5da3a2b77e"
@@ -10377,6 +10389,13 @@ send@0.18.0:
     on-finished "2.4.1"
     range-parser "~1.2.1"
     statuses "2.0.1"
+
+sendchamp-sdk@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/sendchamp-sdk/-/sendchamp-sdk-1.0.8.tgz#b1d9cc479d407495b2cf7625f37a01c7dc7bfac7"
+  integrity sha512-87TF0iTuU0bgU6C30OU0yfKuabAEv/MuFthSkNkBC1DboSVVaOvb4xhpXQf4mKrZoAwvTIXdHRMab34DuAn7AQ==
+  dependencies:
+    axios "^0.21.1"
 
 sendmail@^1.6.1:
   version "1.6.1"
