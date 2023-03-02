@@ -43,6 +43,9 @@
         "notify",
         "panic"
       ]
+    },
+    "notified": {
+      "type": "integer"
     }
   }
 }

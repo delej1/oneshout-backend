@@ -6,6 +6,7 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 const { isObject } = require("lodash");
+const { sendShoutNotification } = require("../services/notification");
 
 module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   api: "api::v1.shout",
@@ -16,6 +17,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   sanitize(data) {
     return strapi.service(this.api).sanitize(data);
   },
+
   /**
    * Creates an Shout.
    * @param {*} ctx
@@ -43,12 +45,60 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
           ...si,
           user: owner,
         },
-        populate: { user: { select: ["id"] } },
+        populate: { user: { select: ["id", "firstname", "lastname"] } },
       });
 
       const so = await this.sanitize(result);
 
+      //send the shout notifications.
+      let rec = so.recipients.split(",");
+      const sent = await sendShoutNotification({
+        message: so.message,
+        recipients: rec,
+        shoutId: so.id,
+        longitude: so.longitude,
+        latitude: so.latitude,
+      });
+
+      if (sent.errors) {
+        so.notified = 0;
+      } else {
+        so.notified = sent.recipients;
+      }
+
+      await strapi.service(this.api).update(result.id, {
+        data: { notified: so.notified },
+      });
+
+      console.log(so);
       return core.response(so);
+    } catch (error) {
+      return ctx.badRequest(error, error.details);
+    }
+  },
+
+  /**
+   * Find shouts for a user.
+   * @param {*} ctx
+   */
+  async find(ctx) {
+    const owner = ctx.state.user;
+    const { pagination: paging } = ctx.query;
+
+    try {
+      const { results, pagination } = await strapi.service(this.api).find({
+        sort: { id: "desc" },
+        pagination: {
+          withCount: true,
+          pageSize: paging.pageSize || 10,
+          page: paging.page,
+        },
+        filters: { recipients: { $contains: owner.phone.trim() } },
+      });
+
+      let shouts = await this.sanitize(results);
+
+      return core.response(shouts, pagination);
     } catch (error) {
       return ctx.badRequest(error, error.details);
     }

@@ -19,7 +19,10 @@ module.exports = createCoreService("api::v1.shout", ({ strapi }) => ({
         message: shout.message,
         latitude: shout.latitude,
         longitude: shout.longitude,
-        user: shout.user,
+        // user: shout.user,
+        senderId: shout.user.id,
+        senderName: shout.user.firstname + " " + shout.user.lastname,
+        senderPhone: shout.user.phone,
         sent: shout.sent,
         type: shout.type,
       };
