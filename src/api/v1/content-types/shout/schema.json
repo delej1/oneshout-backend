@@ -46,6 +46,9 @@
     },
     "notified": {
       "type": "integer"
+    },
+    "tracker_channel": {
+      "type": "string"
     }
   }
 }

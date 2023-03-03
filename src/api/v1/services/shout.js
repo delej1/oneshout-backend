@@ -25,6 +25,7 @@ module.exports = createCoreService("api::v1.shout", ({ strapi }) => ({
         senderPhone: shout.user.phone,
         sent: shout.sent,
         type: shout.type,
+        trackerChannel: shout.tracker_channel,
       };
     };
 

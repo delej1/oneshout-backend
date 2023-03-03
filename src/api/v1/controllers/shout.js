@@ -45,7 +45,9 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
           ...si,
           user: owner,
         },
-        populate: { user: { select: ["id", "firstname", "lastname"] } },
+        populate: {
+          user: { select: ["id", "firstname", "lastname", "phone"] },
+        },
       });
 
       const so = await this.sanitize(result);
@@ -67,7 +69,10 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       }
 
       await strapi.service(this.api).update(result.id, {
-        data: { notified: so.notified },
+        data: {
+          notified: so.notified,
+          tracker_channel: `tracker_${owner}_${so.id}`,
+        },
       });
 
       console.log(so);
@@ -84,16 +89,21 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   async find(ctx) {
     const owner = ctx.state.user;
     const { pagination: paging } = ctx.query;
-
+    console.log(ctx.query);
     try {
       const { results, pagination } = await strapi.service(this.api).find({
         sort: { id: "desc" },
-        pagination: {
-          withCount: true,
-          pageSize: paging.pageSize || 10,
-          page: paging.page,
-        },
+        pagination: paging
+          ? {
+              withCount: true,
+              pageSize: paging.pageSize || 10,
+              page: paging.page,
+            }
+          : null,
         filters: { recipients: { $contains: owner.phone.trim() } },
+        populate: {
+          user: { select: ["id", "firstname", "lastname", "phone"] },
+        },
       });
 
       let shouts = await this.sanitize(results);
