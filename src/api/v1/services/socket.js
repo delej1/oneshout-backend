@@ -19,7 +19,7 @@ module.exports = {
       console.log("Connection Query: ", query);
 
       socket.on("position-change", async (data, callback) => {
-        const d = JSON.parse(data);
+        const d = data; //JSON.parse(data);
         console.log(d);
         // let x = await strapi.query("api::shout.shout").findMany();
         // console.log(x);
