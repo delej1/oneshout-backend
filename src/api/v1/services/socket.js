@@ -16,7 +16,7 @@ module.exports = {
 
     io.on("connection", function (socket) {
       const query = socket.handshake.query;
-      console.log("Connect", query);
+      console.log("Connection Query: ", query);
 
       socket.on("position-change", async (data, callback) => {
         const d = JSON.parse(data);
@@ -46,20 +46,19 @@ module.exports = {
         }
       });
 
-      socket.on("help", ({ username }) => {
+      socket.on("help", ({ channel }) => {
         // Listening for a join connection
-        console.log("user connected");
-        console.log("username is ", username);
-        if (username) {
-          const room = `help_${username}`;
-          socket.join(room); // Adding the user to the group
-          socket.emit(room, "welcome, someone will see your shout.");
-          socket.broadcast.to(room).emit("message", {
+        console.log("* shouter connected *");
+        console.log("shouter's channel is ", channel);
+        if (channel) {
+          socket.join(channel); // Adding the user to the group
+          socket.emit(channel, "welcome, someone will see your shout.");
+          socket.broadcast.to(channel).emit("message", {
             //Sending the message to the group
             user: "data.username",
             text: "data.message",
           });
-          console.log("shouted");
+          console.log("shout successful");
         } else {
           console.log("An error occurred");
         }
