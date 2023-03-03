@@ -26,9 +26,9 @@ module.exports = {
         const sockets = await io.in(d.channel).fetchSockets();
         console.log(sockets.length);
 
-        io.emit(d.channel, { data });
+        io.emit(d.channel, JSON.stringify(data));
         callback(sockets.length);
-        socket.emit("location-sent", sockets.length);
+        // socket.emit("location-sent", sockets.length);
       });
 
       socket.on("disconnect", () => {});
@@ -38,7 +38,7 @@ module.exports = {
         // Listening for a join connection
         console.log("helper connected");
         if (channel) {
-          socket.join(channel); // Adding the user to the group
+          // socket.join(channel); // Adding the user to the group
           socket.emit(channel, "Welcome herer");
           console.log("channel is", channel.trim());
         } else {
@@ -51,7 +51,7 @@ module.exports = {
         console.log("* shouter connected *");
         console.log("shouter's channel is ", channel);
         if (channel) {
-          socket.join(channel); // Adding the user to the group
+          // socket.join(channel); // Adding the user to the group
           socket.emit(channel, "welcome, someone will see your shout.");
           socket.broadcast.to(channel).emit("message", {
             //Sending the message to the group

@@ -21,12 +21,6 @@
     "message": {
       "type": "string"
     },
-    "latitude": {
-      "type": "string"
-    },
-    "longitude": {
-      "type": "string"
-    },
     "sent": {
       "type": "string"
     },
@@ -49,6 +43,12 @@
     },
     "tracker_channel": {
       "type": "string"
+    },
+    "latitude": {
+      "type": "float"
+    },
+    "longitude": {
+      "type": "float"
     }
   }
 }
