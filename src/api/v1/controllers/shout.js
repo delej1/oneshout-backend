@@ -6,7 +6,10 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 const { isObject } = require("lodash");
-const { sendShoutNotification } = require("../services/notification");
+const {
+  sendShoutNotification,
+  cancelShoutNotification,
+} = require("../services/notification");
 
 module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   api: "api::v1.shout",
@@ -54,6 +57,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
       //send the shout notifications.
       let rec = so.recipients.split(",");
+
       const sent = await sendShoutNotification({
         message: so.message,
         recipients: rec,
@@ -89,7 +93,9 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   async find(ctx) {
     const owner = ctx.state.user;
     const { pagination: paging } = ctx.query;
+    console.log(owner);
     console.log(ctx.query);
+
     try {
       const { results, pagination } = await strapi.service(this.api).find({
         sort: { id: "desc" },
@@ -112,5 +118,27 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
     } catch (error) {
       return ctx.badRequest(error, error.details);
     }
+  },
+
+  async cancelShout(ctx) {
+    const user = ctx.state.user;
+    const { id } = ctx.params;
+
+    const entry = await strapi.service(this.api).update(id, {
+      data: {
+        status: "safe",
+      },
+      populate: { user: { select: ["id", "firstname", "lastname"] } },
+    });
+
+    const sendTo = entry.recipients.split(",");
+    const name = entry.user.firstname + " " + entry.user.lastname;
+
+    const sent = await cancelShoutNotification({
+      message: name + " is safe now. Thanks for your concern.",
+      recipients: sendTo,
+    });
+
+    return core.response({});
   },
 }));

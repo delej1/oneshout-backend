@@ -12,5 +12,11 @@ module.exports = {
       handler: "shout.find",
       config: { policies: [], middlewares: [] },
     },
+    {
+      method: "POST",
+      path: "/v1/shouts/cancel-shout/:id",
+      handler: "shout.cancelShout",
+      config: { policies: [], middlewares: [] },
+    },
   ],
 };

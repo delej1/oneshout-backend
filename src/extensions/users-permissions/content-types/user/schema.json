@@ -80,6 +80,15 @@
     },
     "country": {
       "type": "string"
+    },
+    "verificationToken": {
+      "type": "string"
+    },
+    "locator": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::v1.locator",
+      "mappedBy": "user"
     }
   }
 }

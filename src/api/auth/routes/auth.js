@@ -15,6 +15,12 @@ module.exports = {
     {
       // Path defined with a URL parameter
       method: "POST",
+      path: "/auth/update",
+      handler: "auth.updateProfile",
+    },
+    {
+      // Path defined with a URL parameter
+      method: "POST",
       path: "/auth/send-otp",
       handler: "auth.sendOTP",
     },

@@ -4,7 +4,7 @@
   "info": {
     "singularName": "shout",
     "pluralName": "shouts",
-    "displayName": "shout",
+    "displayName": "Shouts",
     "description": ""
   },
   "options": {
@@ -32,11 +32,7 @@
     },
     "type": {
       "type": "enumeration",
-      "enum": [
-        "help",
-        "notify",
-        "panic"
-      ]
+      "enum": ["help", "notify", "panic"]
     },
     "notified": {
       "type": "integer"
@@ -49,6 +45,17 @@
     },
     "longitude": {
       "type": "float"
+    },
+    "locations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::v1.shout-location",
+      "mappedBy": "shout"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["help", "safe"],
+      "default": "help"
     }
   }
 }

@@ -43,13 +43,49 @@ const sendShoutNotification = ({
       },
     })
     .then(function (response) {
-      // console.log(response.data);
+      console.log(response.data);
       return response.data;
     })
     .catch(function (error) {
-      // console.error(error.response.data);
+      console.error(error.response.data);
       return error.response.data;
     });
 };
 
-module.exports = { sendShoutNotification };
+const cancelShoutNotification = ({
+  recipients,
+  message,
+  shoutId,
+  longitude,
+  latitude,
+}) => {
+  const { options } = init();
+  let data = options.data;
+  return axios
+    .request({
+      ...options,
+      data: {
+        ...data,
+        android_channel_id: "5dac8b53-6f96-41a6-8d6b-2c3d0f0467b6",
+        android_group: "911",
+        thread_id: "911",
+        // android_group_message: { en: "You have $[notif_count] new shouts" },
+        // summary_arg: { en: "You have $[notif_count] new shouts" },
+        name: "SHOUT_CANCEL_NOTIFICATION",
+        include_external_user_ids: recipients,
+        contents: { en: message },
+
+        data: { shoutId, longitude, latitude },
+      },
+    })
+    .then(function (response) {
+      console.log(response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.error(error.response.data);
+      return error.response.data;
+    });
+};
+
+module.exports = { sendShoutNotification, cancelShoutNotification };

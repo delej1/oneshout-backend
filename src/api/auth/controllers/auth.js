@@ -3,6 +3,7 @@ const { createCoreController } = require("@strapi/strapi").factories;
 const bcrypt = require("bcryptjs");
 const { sendOTP } = require("../../v1/services/sendchamp");
 const tokenCodes = require("referral-codes");
+const { isObject } = require("lodash");
 /**
  * A set of functions called "actions" for `auth`
  */
@@ -19,7 +20,13 @@ module.exports = {
     "confirmed",
   ],
   populate: { role: { select: ["type"] } },
-
+  generateOTP() {
+    return tokenCodes.generate({
+      length: 5,
+      count: 1,
+      charset: "0123456789",
+    })[0];
+  },
   /**
    * Send OTP
    * @param {*} ctx
@@ -27,11 +34,7 @@ module.exports = {
   async sendOTP(ctx) {
     const user = ctx.state.user;
     const { phone, firstname, channel } = ctx.request.body;
-    const token = tokenCodes.generate({
-      length: 6,
-      count: 1,
-      charset: "0123456789",
-    })[0];
+    const token = this.generateOTP();
 
     try {
       //save OTP first.
@@ -40,29 +43,57 @@ module.exports = {
         .update({
           where: { id: user.id },
           data: {
-            confirmationToken: token,
+            verificationToken: token,
           },
         });
 
       if (result) {
-        const vt = await sendOTP({ token, phone, firstname, channel });
-        ctx.body = vt;
+        const vt = await sendOTP({
+          token,
+          phone: user.phone,
+          channel: channel ?? "sms",
+        });
+
+        if (vt && vt.code == 200) return true;
+
+        return core.response({
+          code_sent: vt && vt.code == 200 ? true : false,
+        });
       } else {
-        ctx.badRequest(
+        return ctx.badRequest(
           "Your verification token was not sent. Please try again in a few minutes."
         );
       }
     } catch (error) {
-      ctx.error = error;
+      return ctx.badRequest("There was an error sending your code.");
     }
   },
+
+  async pushOTP({ id, token, phone, channel }) {
+    //save OTP first.
+    const result = await strapi.query("plugin::users-permissions.user").update({
+      where: { id: id },
+      data: {
+        verificationToken: token,
+      },
+    });
+
+    if (result) {
+      const vt = await sendOTP({ token, phone, channel });
+      if (vt && vt.code == 200) return true;
+      return false;
+    } else {
+      return false;
+    }
+  },
+
   async verifyOTP(ctx) {
     const user = ctx.state.user;
     const { token } = ctx.request.body;
-
+    console.log(user.verificationToken);
     //get the user.
-    if (user.confirmationToken != token) {
-      ctx.badRequest("Your verification token is invalid.");
+    if (!user.verificationToken || user.verificationToken != token) {
+      return ctx.badRequest("Your verification token is invalid.");
     }
 
     try {
@@ -71,15 +102,13 @@ module.exports = {
         .update({
           where: { id: user.id },
           data: {
-            confirmationToken: null,
+            verificationToken: null,
             confirmed: true,
           },
         });
-      if (result) {
-        ctx.body = true;
-      }
+      return core.response({ valid: result.confirmed });
     } catch (error) {
-      ctx.error = error;
+      return ctx.badRequest("There was an error verifying your code.");
     }
   },
 
@@ -98,30 +127,30 @@ module.exports = {
       //throw error: token is not found
       return ctx.badRequest("Password is required.", {});
     }
-    if (!firstname || !lastname) {
-      //throw error: token is not found
-      return ctx.badRequest("First and Last name is required.", {});
-    }
+    // if (!firstname || !lastname) {
+    //   //throw error: token is not found
+    //   return ctx.badRequest("First and Last name is required.", {});
+    // }
     if (!country) {
       //throw error: token is not found
       return ctx.badRequest("Country is required.", {});
     }
-    if (!email) {
-      //throw error: token is not found
-      return ctx.badRequest("Email address is required.", {});
-    }
+    // if (!email) {
+    //   //throw error: token is not found
+    //   return ctx.badRequest("Email address is required.", {});
+    // }
 
     try {
-      let cleanPhone = phone.replace("+", "");
+      // let cleanPhone = phone.replace("+", "");
       const qp = {
         firstname,
         lastname,
         country,
-        phone: cleanPhone,
+        phone,
         email,
         password,
       };
-
+      console.log(qp);
       //check for user with phone
       const user_exists = await strapi
         .query("plugin::users-permissions.user")
@@ -131,20 +160,19 @@ module.exports = {
           populate: this.populate,
         });
 
+      console.log("user_exists", user_exists);
+
       if (user_exists) {
-        return ctx.badRequest("A user already exists with this phone number.", {
-          code: "user-creation-failed",
-        });
+        return ctx.badRequest("A user already exists with this phone number.");
       }
 
       //create user
       user = await this._createUser(qp);
+      console.log("user", user);
 
       if (!user) {
         //user not created successfully
-        return ctx.badRequest("User not created successfully", {
-          code: "user-creation-failed",
-        });
+        return ctx.badRequest("User not created successfully");
       }
 
       //fetch user's jwt token
@@ -155,15 +183,22 @@ module.exports = {
       user.id = user.id.toString();
       user.isSubscriber = user.role.type == "subscriber";
 
+      const token = this.generateOTP();
+      const code_sent = await this.pushOTP({
+        id: user.id,
+        token,
+        phone,
+        channel: "sms",
+      });
+
       let userData = {
         user: this._sanitizeUser(user),
         jwt,
+        code_sent: code_sent,
       };
 
       //return api response
-      ctx.body = {
-        data: userData,
-      };
+      return core.response(userData);
     } catch (error) {
       console.log(error);
       ctx.error = error;
@@ -214,6 +249,53 @@ module.exports = {
     });
 
     return user;
+  },
+
+  async updateProfile(ctx) {
+    const user = ctx.state.user;
+    const { firstname, lastname, email } = ctx.request.body;
+
+    if (!firstname || !lastname) {
+      //throw error: token is not found
+      return ctx.badRequest("First and Last names are required.", {});
+    }
+
+    if (!email) {
+      //throw error: token is not found
+      return ctx.badRequest("Email address is required.", {});
+    }
+
+    const result = await strapi.query("plugin::users-permissions.user").update({
+      where: { id: user.id },
+      data: {
+        firstname,
+        lastname,
+        email,
+      },
+      select: this.select,
+      populate: this.populate,
+    });
+
+    if (result) {
+      const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
+        id: result.id,
+      });
+
+      result.id = result.id.toString();
+      result.isSubscriber = result.role.type == "subscriber";
+
+      let userData = {
+        user: this._sanitizeUser(result),
+        jwt,
+      };
+
+      //return api response
+      ctx.body = {
+        data: userData,
+      };
+    } else {
+      return ctx.badRequest("Your profile could not be updated.");
+    }
   },
 
   /**

@@ -19,30 +19,39 @@ module.exports = {
       console.log("Connection Query: ", query);
 
       socket.on("position-change", async (data, callback) => {
-        const d = data; //JSON.parse(data);
-        console.log(d);
-        // let x = await strapi.query("api::shout.shout").findMany();
-        // console.log(x);
+        const d = JSON.parse(data);
+        // console.log(d);
+
         const sockets = await io.in(d.channel).fetchSockets();
-        console.log(sockets.length);
 
         io.emit(d.channel, JSON.stringify(data));
-        callback(sockets.length);
+        if (callback) callback(sockets.length);
         // socket.emit("location-sent", sockets.length);
+        //post the new location.
+        await strapi
+          .service("api::v1.shout-location")
+          .saveLocationChange({ id: d.shoutId, lng: d.lng, lat: d.lat });
+        // console.log(x);
       });
 
       socket.on("disconnect", () => {});
 
       //Listening for a connection from the frontend
-      socket.on("join", ({ channel }) => {
+      socket.on("join", async ({ channel }, callback) => {
         // Listening for a join connection
-        console.log("helper connected");
+        console.log("helper connected on " + query.channel);
         if (channel) {
-          // socket.join(channel); // Adding the user to the group
-          socket.emit(channel, "Welcome herer");
-          console.log("channel is", channel.trim());
-        } else {
-          console.log("An error occurred: No channel to join.");
+          socket.join(channel); // Adding the user to the group
+
+          //get the shouts
+          const locations = await strapi
+            .service("api::v1.shout-location")
+            .getLocations({ id: query.shoutId });
+          //return callback
+          console.log(locations);
+          console.log(callback);
+          socket.emit("joined", JSON.stringify(locations));
+          if (callback) callback(JSON.stringify(locations));
         }
       });
 

@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shout_locations",
+  "info": {
+    "singularName": "shout-location",
+    "pluralName": "shout-locations",
+    "displayName": "Shout Location",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "shout": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::v1.shout",
+      "inversedBy": "locations"
+    },
+    "coordinates": {
+      "type": "json"
+    },
+    "watchers": {
+      "type": "json"
+    }
+  }
+}

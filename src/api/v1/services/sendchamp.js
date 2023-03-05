@@ -50,7 +50,7 @@ const sendOTP = async ({ token, phone, firstname, channel }) => {
       console.log(response.data);
     })
     .catch(function (error) {
-      console.error(error.response.data);
+      console.error(error.response);
     });
 };
 

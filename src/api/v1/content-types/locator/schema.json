@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "locators",
+  "info": {
+    "singularName": "locator",
+    "pluralName": "locators",
+    "displayName": "Locators",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "locator"
+    },
+    "lat": {
+      "type": "float",
+      "required": true
+    },
+    "lng": {
+      "type": "float",
+      "required": true
+    }
+  }
+}
