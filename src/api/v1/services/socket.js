@@ -48,10 +48,10 @@ module.exports = {
             .service("api::v1.shout-location")
             .getLocations({ id: query.shoutId });
           //return callback
-          console.log(locations);
+          // console.log(locations);
           console.log(callback);
-          socket.emit("joined", JSON.stringify(locations));
-          if (callback) callback(JSON.stringify(locations));
+          io.emit("joined", locations);
+          if (callback) callback("JSON.stringify(locations)");
         }
       });
 

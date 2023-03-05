@@ -109,6 +109,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         filters: { recipients: { $contains: owner.phone.trim() } },
         populate: {
           user: { select: ["id", "firstname", "lastname", "phone"] },
+          locations: { select: ["coordinates"] },
         },
       });
 
