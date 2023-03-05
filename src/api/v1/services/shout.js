@@ -12,6 +12,7 @@ module.exports = createCoreService("api::v1.shout", ({ strapi }) => ({
   q: strapi.query("api::v1.shout"),
   async sanitize(result) {
     const sanitized = async (shout) => {
+      console.log(shout.location);
       return {
         id: shout.id,
         date: shout.date,
@@ -27,7 +28,7 @@ module.exports = createCoreService("api::v1.shout", ({ strapi }) => ({
         type: shout.type,
         trackerChannel: shout.tracker_channel,
         status: shout.status,
-        locations: shout.locations.coordinates,
+        locations: shout.location ? shout.location.coordinates : [],
       };
     };
 

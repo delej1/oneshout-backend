@@ -12,17 +12,17 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "shout": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::v1.shout",
-      "inversedBy": "locations"
-    },
     "coordinates": {
       "type": "json"
     },
     "watchers": {
       "type": "json"
+    },
+    "shout": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::v1.shout",
+      "mappedBy": "location"
     }
   }
 }

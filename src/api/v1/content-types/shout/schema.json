@@ -32,7 +32,11 @@
     },
     "type": {
       "type": "enumeration",
-      "enum": ["help", "notify", "panic"]
+      "enum": [
+        "help",
+        "notify",
+        "panic"
+      ]
     },
     "notified": {
       "type": "integer"
@@ -46,15 +50,18 @@
     "longitude": {
       "type": "float"
     },
-    "locations": {
+    "location": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "oneToOne",
       "target": "api::v1.shout-location",
-      "mappedBy": "shout"
+      "inversedBy": "shout"
     },
     "status": {
       "type": "enumeration",
-      "enum": ["help", "safe"],
+      "enum": [
+        "help",
+        "safe"
+      ],
       "default": "help"
     }
   }

@@ -52,8 +52,16 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
           user: { select: ["id", "firstname", "lastname", "phone"] },
         },
       });
-
       const so = await this.sanitize(result);
+
+      await strapi.service("api::v1.shout-location").create({
+        data: {
+          shout: result.id,
+          coordinates: [
+            { timestamp: Date.now(), lng: so.longitude, lat: so.latitude },
+          ],
+        },
+      });
 
       //send the shout notifications.
       let rec = so.recipients.split(",");
@@ -93,8 +101,6 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   async find(ctx) {
     const owner = ctx.state.user;
     const { pagination: paging } = ctx.query;
-    console.log(owner);
-    console.log(ctx.query);
 
     try {
       const { results, pagination } = await strapi.service(this.api).find({
@@ -109,13 +115,17 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         filters: { recipients: { $contains: owner.phone.trim() } },
         populate: {
           user: { select: ["id", "firstname", "lastname", "phone"] },
-          locations: { select: ["coordinates"] },
+          location: { select: ["coordinates"] },
         },
       });
 
-      let shouts = await this.sanitize(results);
-
-      return core.response(shouts, pagination);
+      if (results) {
+        let shouts = await this.sanitize(results);
+        console.log(shouts);
+        return core.response(shouts, pagination);
+      } else {
+        return core.response([]);
+      }
     } catch (error) {
       return ctx.badRequest(error, error.details);
     }
