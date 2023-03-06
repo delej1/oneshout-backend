@@ -19,8 +19,8 @@ module.exports = {
       console.log("Connection Query: ", query);
 
       socket.on("position-change", async (data, callback) => {
-        const d = JSON.parse(data);
-        // console.log(d);
+        const d = data; //JSON.parse(data);
+        console.log(d);
 
         const sockets = await io.in(d.channel).fetchSockets();
 
@@ -43,15 +43,11 @@ module.exports = {
         if (channel) {
           socket.join(channel); // Adding the user to the group
 
-          //get the shouts
-          const locations = await strapi
-            .service("api::v1.shout-location")
-            .getLocations({ id: query.shoutId });
           //return callback
           // console.log(locations);
-          console.log(callback);
-          io.emit("joined", locations);
-          if (callback) callback("JSON.stringify(locations)");
+          // console.log(callback);
+          // io.emit("joined", locations);
+          // if (callback) callback("JSON.stringify(locations)");
         }
       });
 

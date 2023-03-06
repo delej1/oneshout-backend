@@ -25,6 +25,10 @@
     "lng": {
       "type": "float",
       "required": true
+    },
+    "locator": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

@@ -14,7 +14,7 @@ module.exports = createCoreService("api::v1.shout-location", ({ strapi }) => ({
         .query(this.api)
         .findOne({ where: { shout: id } });
 
-      const date = new Date.now();
+      const date = new Date();
 
       let location = {
         timestamp: date.toISOString(),
