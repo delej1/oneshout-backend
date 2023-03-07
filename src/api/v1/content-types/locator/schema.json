@@ -41,6 +41,9 @@
     "viewers": {
       "type": "string",
       "maxLength": 1500
+    },
+    "lastSeen": {
+      "type": "datetime"
     }
   }
 }

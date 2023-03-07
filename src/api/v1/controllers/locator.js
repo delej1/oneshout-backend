@@ -2,6 +2,8 @@
 
 const { isArray } = require("lodash");
 const { sendLocatorRequestNotification } = require("../services/notification");
+const { isObject } = require("lodash");
+
 /**
  * locate-me controller
  */
@@ -79,6 +81,56 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     }
 
     return core.response(true);
+  },
+
+  async updateLocation(ctx) {
+    const user = ctx.state.user;
+    const { data } = ctx.request.body;
+    if (!isObject(data)) {
+      return ctx.badRequest('Missing "data" payload in the request body');
+    }
+    try {
+      await strapi.db.query(this.api).update({
+        where: {
+          user: user.id,
+        },
+        data: {
+          lng: data.lng,
+          lat: data.lat,
+          lastSeen: new Date().toISOString(),
+        },
+      });
+      return core.response(true);
+    } catch (error) {
+      return ctx.badRequest(error, error.details);
+    }
+  },
+
+  async updateCanLocate(ctx) {
+    const user = ctx.state.user;
+    const { data } = ctx.request.body;
+
+    if (!isObject(data)) {
+      return ctx.badRequest('Missing "data" payload in the request body');
+    }
+
+    console.log(data.viewers.join(","));
+
+    try {
+      await strapi.db.query(this.api).update({
+        where: {
+          user: user.id,
+        },
+        data: {
+          locateMe: data.canLocateMe,
+          viewers: data.viewers.join(","),
+        },
+      });
+
+      return core.response(true);
+    } catch (error) {
+      return ctx.badRequest(error, error.details);
+    }
   },
 
   async sanitize(result) {

@@ -12,5 +12,17 @@ module.exports = {
       handler: "locator.requestLocator",
       config: { policies: [], middlewares: [] },
     },
+    {
+      method: "POST",
+      path: "/v1/locators/update-location",
+      handler: "locator.updateLocation",
+      config: { policies: [], middlewares: [] },
+    },
+    {
+      method: "POST",
+      path: "/v1/locators/update-can-locate",
+      handler: "locator.updateCanLocate",
+      config: { policies: [], middlewares: [] },
+    },
   ],
 };
