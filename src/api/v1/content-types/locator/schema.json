@@ -4,7 +4,7 @@
   "info": {
     "singularName": "locator",
     "pluralName": "locators",
-    "displayName": "Locators",
+    "displayName": "User Locators",
     "description": ""
   },
   "options": {
@@ -20,15 +20,27 @@
     },
     "lat": {
       "type": "float",
-      "required": true
+      "required": false
     },
     "lng": {
       "type": "float",
-      "required": true
+      "required": false
     },
-    "locator": {
+    "locateMe": {
       "type": "boolean",
       "default": false
+    },
+    "viewedBy": {
+      "type": "enumeration",
+      "enum": [
+        "all",
+        "restricted"
+      ],
+      "default": "restricted"
+    },
+    "viewers": {
+      "type": "string",
+      "maxLength": 1500
     }
   }
 }

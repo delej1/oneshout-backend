@@ -52,6 +52,46 @@ const sendShoutNotification = ({
     });
 };
 
+const sendLocatorRequestNotification = ({
+  phone,
+  message,
+  userName,
+  userPhone,
+}) => {
+  const { options } = init();
+  let data = options.data;
+  return axios
+    .request({
+      ...options,
+      data: {
+        ...data,
+        android_channel_id: "b658c1ca-722a-4897-b07b-441c2f4a9bfd",
+        android_group: "910",
+        thread_id: "910",
+        name: "LOCATOR_NOTIFICATION",
+        include_external_user_ids: [...phone],
+        contents: { en: message },
+        buttons: [
+          {
+            id: "share-location",
+            text: "Share Location",
+            icon: "ic_menu_share",
+          },
+          { id: "cancel", text: "Cancel", icon: "" },
+        ],
+        data: { userName, userPhone },
+      },
+    })
+    .then(function (response) {
+      console.log(response.data);
+      return response.data;
+    })
+    .catch(function (error) {
+      console.error(error.response.data);
+      return error.response.data;
+    });
+};
+
 const cancelShoutNotification = ({
   recipients,
   message,
@@ -88,4 +128,8 @@ const cancelShoutNotification = ({
     });
 };
 
-module.exports = { sendShoutNotification, cancelShoutNotification };
+module.exports = {
+  sendShoutNotification,
+  cancelShoutNotification,
+  sendLocatorRequestNotification,
+};

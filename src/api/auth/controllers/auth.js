@@ -168,6 +168,7 @@ module.exports = {
 
       //create user
       user = await this._createUser(qp);
+
       console.log("user", user);
 
       if (!user) {
@@ -247,6 +248,11 @@ module.exports = {
       select: this.select,
       populate: this.populate,
     });
+
+    // locator.
+    if (user) {
+      await strapi.query("api::v1.locator").create({ data: { user: user.id } });
+    }
 
     return user;
   },
