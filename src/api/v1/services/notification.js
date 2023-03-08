@@ -28,7 +28,7 @@ const sendShoutNotification = ({
       ...options,
       data: {
         ...data,
-        android_channel_id: "baee5bcd-0f22-4c4f-8c98-e80436559e9d",
+        android_channel_id: "d9017750-d5ed-4b14-b6d2-4a35e6fc75d3",
         android_group: "911",
         thread_id: "911",
         android_group_message: { en: "You have $[notif_count] new shouts" },
@@ -65,7 +65,7 @@ const sendLocatorRequestNotification = ({
       ...options,
       data: {
         ...data,
-        android_channel_id: "b658c1ca-722a-4897-b07b-441c2f4a9bfd",
+        android_channel_id: "f8ed722c-abfa-4afa-b080-4cb5592faa47",
         android_group: "910",
         thread_id: "910",
         name: "LOCATOR_NOTIFICATION",
@@ -106,7 +106,7 @@ const cancelShoutNotification = ({
       ...options,
       data: {
         ...data,
-        android_channel_id: "5dac8b53-6f96-41a6-8d6b-2c3d0f0467b6",
+        android_channel_id: "d9017750-d5ed-4b14-b6d2-4a35e6fc75d3",
         android_group: "911",
         thread_id: "911",
         // android_group_message: { en: "You have $[notif_count] new shouts" },
