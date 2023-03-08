@@ -12,9 +12,9 @@
   "devDependencies": {},
   "dependencies": {
     "@onesignal/node-onesignal": "^1.0.0-beta9",
-    "@strapi/plugin-i18n": "4.6.0",
-    "@strapi/plugin-users-permissions": "4.6.0",
-    "@strapi/strapi": "4.6.0",
+    "@strapi/plugin-i18n": "4.7.1",
+    "@strapi/plugin-users-permissions": "4.7.1",
+    "@strapi/strapi": "4.7.1",
     "@tochie/vscore": "^0.0.5",
     "api": "^5.0.7",
     "pg": "8.6.0",
