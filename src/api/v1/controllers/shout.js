@@ -87,7 +87,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         },
       });
 
-      console.log(so);
+      // console.log(so);
       return core.response(so);
     } catch (error) {
       return ctx.badRequest(error, error.details);

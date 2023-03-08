@@ -43,7 +43,7 @@ const sendShoutNotification = ({
       },
     })
     .then(function (response) {
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     })
     .catch(function (error) {
@@ -83,7 +83,7 @@ const sendLocatorRequestNotification = ({
       },
     })
     .then(function (response) {
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     })
     .catch(function (error) {
@@ -119,7 +119,7 @@ const cancelShoutNotification = ({
       },
     })
     .then(function (response) {
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     })
     .catch(function (error) {

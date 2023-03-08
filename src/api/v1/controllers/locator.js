@@ -15,7 +15,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
   async findLocators(ctx) {
     const user = ctx.state.user;
     const { data } = ctx.request.body;
-    console.log(data);
+
     const list = data.contacts; //? contacts.split(",") : [];
 
     const result = await strapi
@@ -43,7 +43,6 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     // const res = await this.sanitize(contactsx);
     const response = await Promise.all(
       locators.map((c) => {
-        console.log(c);
         return {
           id: c.id,
           locateMe: c.locateMe,
@@ -54,7 +53,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         };
       })
     );
-    console.log(response);
+
     return core.response(response);
   },
 
@@ -63,7 +62,6 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     const { data } = ctx.request.body;
 
     const phone = data.phone;
-    console.log(phone);
 
     const result = await sendLocatorRequestNotification({
       phone,
@@ -114,8 +112,6 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       return ctx.badRequest('Missing "data" payload in the request body');
     }
 
-    console.log(data.viewers.join(","));
-
     try {
       await strapi.db.query(this.api).update({
         where: {
@@ -135,7 +131,6 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
 
   async sanitize(result) {
     const sanitized = async (c) => {
-      console.log(c);
       return {
         id: c.id,
         locateMe: c.locateMe,
