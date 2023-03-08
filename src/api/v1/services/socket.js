@@ -19,8 +19,7 @@ module.exports = {
       console.log("Connection Query: ", query);
 
       socket.on("position-change", async (data, callback) => {
-        const d = data; //JSON.parse(data);
-        console.log(d);
+        const d = JSON.parse(data);
 
         const sockets = await io.in(d.channel).fetchSockets();
 

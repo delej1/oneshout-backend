@@ -1,7 +1,10 @@
 "use strict";
 
 const { isArray } = require("lodash");
-const { sendLocatorRequestNotification } = require("../services/notification");
+const {
+  sendLocatorRequestNotification,
+  sendShoutNotification,
+} = require("../services/notification");
 const { isObject } = require("lodash");
 
 /**
@@ -62,7 +65,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     const { data } = ctx.request.body;
 
     const phone = data.phone;
-
+    console.log(phone);
     const result = await sendLocatorRequestNotification({
       phone,
       message:
@@ -74,6 +77,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       userPhone: phone,
     });
 
+    console.log(result);
     if (result.errors || result.recipients == 0) {
       return core.response(false);
     }

@@ -26,7 +26,7 @@ module.exports = createCoreService("api::v1.shout-location", ({ strapi }) => ({
         entry.coordinates.push(location);
 
         await strapi.query(this.api).update({
-          where: { shout: id },
+          where: { id: entry.id },
           data: { coordinates: entry.coordinates },
         });
       } else {

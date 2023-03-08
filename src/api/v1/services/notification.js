@@ -14,6 +14,7 @@ const init = () => {
   };
   return { options };
 };
+
 const sendShoutNotification = ({
   recipients,
   message,
@@ -83,11 +84,12 @@ const sendLocatorRequestNotification = ({
       },
     })
     .then(function (response) {
-      // console.log(response.data);
+      console.log(response.data);
       return response.data;
     })
     .catch(function (error) {
-      console.error(error.response.data);
+      console.error(error);
+      // console.error(error.response.data);
       return error.response.data;
     });
 };
