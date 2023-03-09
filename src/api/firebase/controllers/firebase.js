@@ -15,19 +15,16 @@ module.exports = {
    * @param {string} token
    */
   async updateFcmToken(ctx) {
-    const { data } = ctx.request.body;
-    if (isEmpty(data)) {
-      return ctx.badRequest("Request body can not empty.", {});
-    }
+    const user = ctx.state.user;
+    const { oldToken, newToken } = ctx.request.body;
 
-    const { uid, oldToken, newToken } = data;
-    if (!uid || !newToken) {
-      return ctx.badRequest("UID and Token are required.", {});
+    if (!newToken) {
+      return ctx.badRequest("Token is required.", {});
     }
 
     const done = await strapi
-      .service("api::user-fcm-token.user-fcm-token")
-      .updateFcmToken(uid, oldToken, newToken);
+      .service("api::v1.user-fcm-token")
+      .updateFcmToken(user, oldToken, newToken);
 
     return core.response(done != null);
   },
@@ -63,7 +60,7 @@ module.exports = {
     //get tokens for recipients
 
     const { users, userTokens, userIds } = await strapi
-      .service("api::user-fcm-token.user-fcm-token")
+      .service("api::v1.user-fcm-token")
       .getFCMTokensByUID(recipients);
 
     if (userTokens.length > 0) {
@@ -92,7 +89,7 @@ module.exports = {
             //If this is a token error, then delete the token from database.
             if (tokenErrors.includes(code)) {
               await strapi
-                .service("api::user-fcm-token.user-fcm-token")
+                .service("api::v1.user-fcm-token")
                 .deleteBadToken(userTokens[key]);
             }
           }

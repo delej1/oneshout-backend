@@ -31,7 +31,7 @@ module.exports = ({ strapi }) => ({
       style: "DEFAULT",
       title: "",
       body: "",
-      image: "",
+      image: "app_icon",
     },
     notification: { title: "", body: "", image: "" },
   },
@@ -44,7 +44,7 @@ module.exports = ({ strapi }) => ({
     // data.image = data.notification.image;
     return {
       data: data.data,
-      // notification: data.notification,
+      notification: data.notification,
     };
   },
 
@@ -64,7 +64,7 @@ module.exports = ({ strapi }) => ({
     // console.log(this.formatMessage(data));
     // console.log(tokens);
     // return;
-
+    console.log(data);
     return await strapi.firebase
       .messaging()
       .sendToDevice(tokens, this.formatMessage(data), {

@@ -19,16 +19,16 @@ module.exports = {
    * run jobs, or perform some special logic.
    */
   bootstrap({ strapi }) {
-    // admin.initializeApp({
-    //   credential: admin.credential.cert({
-    //     projectId: process.env.FIREBASE_PROJECT_ID.toString(),
-    //     clientEmail: process.env.FIREBASE_CLIENT_EMAIL.toString(),
-    //     privateKey: process.env.FIREBASE_PRIVATE_KEY.toString(),
-    //   }),
-    //   projectId: process.env.FIREBASE_PROJECT_ID.toString(),
-    // });
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID.toString(),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL.toString(),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.toString(),
+      }),
+      projectId: process.env.FIREBASE_PROJECT_ID.toString(),
+    });
 
-    // strapi.firebase = admin;
+    strapi.firebase = admin;
 
     core.utils = { ...core.utils, ...utils };
     //initialize socket connection

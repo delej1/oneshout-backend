@@ -64,23 +64,66 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     const owner = ctx.state.user;
     const { data } = ctx.request.body;
 
-    const phone = data.phone;
-    console.log(phone);
-    const result = await sendLocatorRequestNotification({
-      phone,
-      message:
+    const { users, userTokens, userIds } = await strapi
+      .service("api::v1.user-fcm-token")
+      .getFCMTokensByUID([data.phone]);
+
+    if (userTokens.length > 0) {
+      //build message
+      let msg = strapi.service("api::firebase.firebase").defaultMessage;
+      msg.data.type = "locator-request";
+      msg.data.payload = {};
+      msg.notification.title = owner.phone;
+      msg.notification.body =
         owner.firstname +
         " " +
         owner.lastname +
-        " wants to view your location.",
-      userName: owner.firstname + " " + owner.lastname,
-      userPhone: phone,
-    });
+        " wants to view your location.";
 
-    console.log(result);
-    if (result.errors || result.recipients == 0) {
-      return core.response(false);
+      //send notification command to FCM service.
+      let response = await strapi.service("api::firebase.firebase").send({
+        tokens: userTokens,
+        data: msg,
+      });
+
+      //if this command returns with failures
+      if (response && response.failureCount > 0) {
+        //run through the result to find the failures
+        for (const [key, result] of Object.entries(response.results)) {
+          //if result.error is not null, then its an error
+          if (result.error != null) {
+            //get the error code
+            const code = result.error["errorInfo"].code;
+
+            //If this is a token error, then delete the token from database.
+            if (tokenErrors.includes(code)) {
+              await strapi
+                .service("api::v1.user-fcm-token")
+                .deleteBadToken(userTokens[key]);
+            }
+          }
+        }
+        return core.response(false);
+      }
     }
+
+    // const phone = data.phone;
+    // console.log(phone);
+    // const result = await sendLocatorRequestNotification({
+    //   phone,
+    //   message:
+    //     owner.firstname +
+    //     " " +
+    //     owner.lastname +
+    //     " wants to view your location.",
+    //   userName: owner.firstname + " " + owner.lastname,
+    //   userPhone: phone,
+    // });
+
+    // console.log(result);
+    // if (result.errors || result.recipients == 0) {
+    //   return core.response(false);
+    // }
 
     return core.response(true);
   },
