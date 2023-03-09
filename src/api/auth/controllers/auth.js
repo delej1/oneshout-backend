@@ -241,6 +241,7 @@ module.exports = {
     params.username = email ? email.split("@")[0] : phone;
     params.confirmed = false;
     params.password = await this.hashPassword(password);
+    params.uid = phone;
 
     //create new user
     const user = await strapi.query("plugin::users-permissions.user").create({

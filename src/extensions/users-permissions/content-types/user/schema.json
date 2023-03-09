@@ -95,6 +95,15 @@
       "relation": "oneToMany",
       "target": "api::v1.contact",
       "mappedBy": "user"
+    },
+    "tokens": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::v1.user-fcm-token",
+      "mappedBy": "user"
+    },
+    "uid": {
+      "type": "string"
     }
   }
 }

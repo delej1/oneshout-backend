@@ -17,6 +17,8 @@
     "@strapi/strapi": "4.7.1",
     "@tochie/vscore": "^0.0.5",
     "api": "^5.0.7",
+    "firebase-admin": "^11.5.0",
+    "moment": "^2.29.4",
     "pg": "8.6.0",
     "referral-codes": "^2.0.3",
     "sendchamp-sdk": "^1.0.8",

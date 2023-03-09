@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_fcm_tokens",
+  "info": {
+    "singularName": "user-fcm-token",
+    "pluralName": "user-fcm-tokens",
+    "displayName": "User FCMToken",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "tokens"
+    },
+    "token": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "private": true
+    },
+    "uid": {
+      "type": "string"
+    }
+  }
+}

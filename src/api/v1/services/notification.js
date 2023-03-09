@@ -60,6 +60,8 @@ const sendLocatorRequestNotification = ({
   userPhone,
 }) => {
   const { options } = init();
+  let phones = [];
+  phones.push(phone);
   let data = options.data;
   return axios
     .request({
@@ -70,7 +72,7 @@ const sendLocatorRequestNotification = ({
         android_group: "910",
         thread_id: "910",
         name: "LOCATOR_NOTIFICATION",
-        include_external_user_ids: [...phone],
+        include_external_user_ids: phones,
         contents: { en: message },
         buttons: [
           {
