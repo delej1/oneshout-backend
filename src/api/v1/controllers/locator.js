@@ -71,7 +71,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     if (userTokens.length > 0) {
       //build message
       let msg = strapi.service("api::firebase.firebase").defaultMessage;
-      msg.data.type = "locator-request";
+      msg.data.type = "request-location";
       msg.data.payload = {};
       msg.notification.title = owner.phone;
       msg.notification.body =
