@@ -44,7 +44,7 @@ module.exports = ({ strapi }) => ({
     // data.image = data.notification.image;
     return {
       data: data.data,
-      notification: data.notification,
+      // notification: data.notification,
     };
   },
 
@@ -61,10 +61,9 @@ module.exports = ({ strapi }) => ({
    */
   async send({ tokens, data, priority = "high", hasContent = true }) {
     // console.log("Sending message to device...");
-    // console.log(this.formatMessage(data));
+    console.log(this.formatMessage(data));
     // console.log(tokens);
     // return;
-    // console.log(data);
     return await strapi.firebase
       .messaging()
       .sendToDevice(tokens, this.formatMessage(data), {

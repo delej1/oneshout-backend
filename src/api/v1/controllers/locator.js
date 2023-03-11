@@ -72,10 +72,12 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       //build message
       let msg = strapi.service("api::firebase.firebase").defaultMessage;
       msg.data.type = "request-location";
-      msg.data.payload = {};
-      // msg.notification.title = owner.phone;
-      msg.notification.title = "Location Request!";
-      msg.notification.body =
+      msg.data.payload = {
+        phone: data.phone,
+        title: "Location Request!",
+      };
+      msg.data.title = "Location Request!";
+      msg.data.body =
         owner.firstname +
         " " +
         owner.lastname +
@@ -90,6 +92,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         data: msg,
       });
 
+      // console.log(response);
       //if this command returns with failures
       if (response && response.failureCount > 0) {
         //run through the result to find the failures
