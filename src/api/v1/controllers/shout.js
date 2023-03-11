@@ -66,7 +66,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       //send the shout notifications.
       let rec = so.recipients.split(",");
 
-      const sent = await sendShoutNotification({
+      const sent = await this.sendNotification({
         message: so.message,
         recipients: rec,
         shoutId: so.id,
@@ -74,15 +74,23 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         latitude: so.latitude,
       });
 
-      if (sent.errors) {
-        so.notified = 0;
-      } else {
-        so.notified = sent.recipients;
-      }
+      // const sent = await sendShoutNotification({
+      //   message: so.message,
+      //   recipients: rec,
+      //   shoutId: so.id,
+      //   longitude: so.longitude,
+      //   latitude: so.latitude,
+      // });
+
+      // if (sent.errors) {
+      //   so.notified = 0;
+      // } else {
+      //   so.notified = sent.recipients;
+      // }
 
       await strapi.service(this.api).update(result.id, {
         data: {
-          notified: so.notified,
+          notified: sent,
           tracker_channel: `tracker_${owner}_${so.id}`,
         },
       });
@@ -92,6 +100,55 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
     } catch (error) {
       return ctx.badRequest(error, error.details);
     }
+  },
+
+  async sendNotification({
+    recipients,
+    message,
+    shoutId,
+    longitude,
+    latitude,
+  }) {
+    const { users, userTokens, userIds } = await strapi
+      .service("api::v1.user-fcm-token")
+      .getFCMTokensByUID(recipients);
+
+    if (userTokens.length > 0) {
+      //build message
+      let msg = strapi.service("api::firebase.firebase").defaultMessage;
+      msg.data.type = "shout-help";
+      msg.data.payload = { shoutId, longitude, latitude };
+      msg.notification.title = "ALERT!";
+      msg.notification.body = message;
+
+      //send notification command to FCM service.
+      let response = await strapi.service("api::firebase.firebase").send({
+        tokens: userTokens,
+        data: msg,
+      });
+
+      //if this command returns with failures
+      if (response && response.failureCount > 0) {
+        //run through the result to find the failures
+        for (const [key, result] of Object.entries(response.results)) {
+          //if result.error is not null, then its an error
+          if (result.error != null) {
+            //get the error code
+            const code = result.error["errorInfo"].code;
+
+            //If this is a token error, then delete the token from database.
+            if (tokenErrors.includes(code)) {
+              await strapi
+                .service("api::v1.user-fcm-token")
+                .deleteBadToken(userTokens[key]);
+            }
+          }
+        }
+      }
+
+      return userTokens.length - response.failureCount;
+    }
+    return 0;
   },
 
   /**

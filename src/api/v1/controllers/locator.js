@@ -73,11 +73,14 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       let msg = strapi.service("api::firebase.firebase").defaultMessage;
       msg.data.type = "request-location";
       msg.data.payload = {};
-      msg.notification.title = owner.phone;
+      // msg.notification.title = owner.phone;
       msg.notification.body =
         owner.firstname +
         " " +
         owner.lastname +
+        " (" +
+        owner.phone +
+        ")" +
         " wants to view your location.";
 
       //send notification command to FCM service.

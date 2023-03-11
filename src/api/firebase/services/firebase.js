@@ -64,7 +64,7 @@ module.exports = ({ strapi }) => ({
     // console.log(this.formatMessage(data));
     // console.log(tokens);
     // return;
-    console.log(data);
+    // console.log(data);
     return await strapi.firebase
       .messaging()
       .sendToDevice(tokens, this.formatMessage(data), {
