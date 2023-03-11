@@ -74,6 +74,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       msg.data.type = "request-location";
       msg.data.payload = {};
       // msg.notification.title = owner.phone;
+      msg.notification.title = "Location Request!";
       msg.notification.body =
         owner.firstname +
         " " +
