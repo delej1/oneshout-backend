@@ -44,7 +44,7 @@ module.exports = ({ strapi }) => ({
     // data.image = data.notification.image;
     return {
       data: data.data,
-      // notification: data.notification,
+      notification: data.notification,
     };
   },
 
