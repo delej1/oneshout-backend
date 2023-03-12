@@ -31,6 +31,7 @@ module.exports = {
     strapi.firebase = admin;
 
     core.utils = { ...core.utils, ...utils };
+
     //initialize socket connection
     socket.initSocket();
   },
