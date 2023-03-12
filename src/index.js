@@ -23,7 +23,7 @@ module.exports = {
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID.toString(),
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL.toString(),
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.toString(),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/gm, "\n"),
       }),
       projectId: process.env.FIREBASE_PROJECT_ID.toString(),
     });
