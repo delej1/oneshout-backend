@@ -13,6 +13,8 @@ const {
 
 module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
   api: "api::v1.shout",
+  fcm: strapi.service("api::firebase.firebase"),
+
   q: strapi.query("api::v1.shout"),
   service: () => {
     return strapi.service("api::v1.shout");
@@ -28,7 +30,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
    */
   async create(ctx) {
     const { data } = ctx.request.body;
-    const owner = ctx.state.user.id;
+    const owner = ctx.state.user;
 
     if (!isObject(data)) {
       return ctx.badRequest('Missing "data" payload in the request body');
@@ -42,23 +44,30 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
     const si = await this.sanitizeInput(data, ctx);
 
+    si.message = `${owner.firstname} ${owner.lastname} (${owner.phone}) needs help! They are at * ${si.latitude},${si.longitude} *`;
+
     try {
       const result = await this.q.create({
         data: {
           ...si,
-          user: owner,
+          user: owner.id,
         },
         populate: {
           user: { select: ["id", "firstname", "lastname", "phone"] },
         },
       });
-      const so = await this.sanitize(result);
 
+      const so = await this.sanitize(result);
+      const date = new Date();
       await strapi.service("api::v1.shout-location").create({
         data: {
           shout: result.id,
           coordinates: [
-            { timestamp: Date.now(), lng: so.longitude, lat: so.latitude },
+            {
+              timestamp: date.toISOString(),
+              lng: so.longitude,
+              lat: so.latitude,
+            },
           ],
         },
       });
@@ -66,35 +75,30 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       //send the shout notifications.
       let rec = so.recipients.split(",");
 
-      const sent = await this.sendNotification({
-        message: so.message,
-        recipients: rec,
-        shoutId: so.id,
-        longitude: so.longitude,
-        latitude: so.latitude,
+      const res = await strapi.service(this.api).update(result.id, {
+        data: {
+          tracker_channel: `tracker_${owner.id}_${so.id}`,
+        },
+        populate: {
+          user: { select: ["id", "firstname", "lastname", "phone"] },
+          location: { select: ["coordinates"] },
+        },
       });
 
-      // const sent = await sendShoutNotification({
-      //   message: so.message,
-      //   recipients: rec,
-      //   shoutId: so.id,
-      //   longitude: so.longitude,
-      //   latitude: so.latitude,
-      // });
+      const shout = await this.sanitize(res);
 
-      // if (sent.errors) {
-      //   so.notified = 0;
-      // } else {
-      //   so.notified = sent.recipients;
-      // }
+      console.log(shout);
+      const sent = await this.sendNotification(shout);
 
       await strapi.service(this.api).update(result.id, {
         data: {
           notified: sent,
-          tracker_channel: `tracker_${owner}_${so.id}`,
+        },
+        populate: {
+          user: { select: ["id", "firstname", "lastname", "phone"] },
+          location: { select: ["coordinates"] },
         },
       });
-
       // console.log(so);
       return core.response(so);
     } catch (error) {
@@ -102,27 +106,21 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
     }
   },
 
-  async sendNotification({
-    recipients,
-    message,
-    shoutId,
-    longitude,
-    latitude,
-  }) {
+  async sendNotification(shout) {
     const { users, userTokens, userIds } = await strapi
       .service("api::v1.user-fcm-token")
-      .getFCMTokensByUID(recipients);
+      .getFCMTokensByUID(shout.recipients.split(","));
 
     if (userTokens.length > 0) {
       //build message
-      let msg = strapi.service("api::firebase.firebase").defaultMessage;
+      let msg = this.fcm.defaultMessage;
       msg.data.type = "shout-help";
-      msg.data.payload = { shoutId, longitude, latitude };
-      msg.notification.title = "ALERT!";
-      msg.notification.body = message;
+      msg.data.payload = { data: shout, type: "shout-help" };
+      msg.data.title = "ALERT!";
+      msg.data.body = shout.message;
 
       //send notification command to FCM service.
-      let response = await strapi.service("api::firebase.firebase").send({
+      let response = await this.fcm.send({
         tokens: userTokens,
         data: msg,
       });
@@ -137,7 +135,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
             const code = result.error["errorInfo"].code;
 
             //If this is a token error, then delete the token from database.
-            if (tokenErrors.includes(code)) {
+            if (this.fcm.tokenErrors().includes(code)) {
               await strapi
                 .service("api::v1.user-fcm-token")
                 .deleteBadToken(userTokens[key]);

@@ -46,10 +46,12 @@
       "type": "string"
     },
     "latitude": {
-      "type": "float"
+      "type": "float",
+      "default": 0
     },
     "longitude": {
-      "type": "float"
+      "type": "float",
+      "default": 0
     },
     "location": {
       "type": "relation",

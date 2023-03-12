@@ -15,6 +15,8 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
   api: "api::v1.locator",
+  fcm: strapi.service("api::firebase.firebase"),
+
   async findLocators(ctx) {
     const user = ctx.state.user;
     const { data } = ctx.request.body;
@@ -70,11 +72,14 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
 
     if (userTokens.length > 0) {
       //build message
-      let msg = strapi.service("api::firebase.firebase").defaultMessage;
+      let msg = this.fcm.defaultMessage;
       msg.data.type = "request-location";
       msg.data.payload = {
-        phone: data.phone,
-        title: "Location Request!",
+        data: {
+          phone: owner.phone,
+          name: owner.firstname + " " + owner.lastname,
+        },
+        type: "request-location",
       };
       msg.data.title = "Location Request!";
       msg.data.body =
@@ -87,7 +92,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         " wants to view your location.";
 
       //send notification command to FCM service.
-      let response = await strapi.service("api::firebase.firebase").send({
+      let response = await this.fcm.send({
         tokens: userTokens,
         data: msg,
       });
@@ -103,7 +108,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
             const code = result.error["errorInfo"].code;
 
             //If this is a token error, then delete the token from database.
-            if (tokenErrors.includes(code)) {
+            if (this.fcm.tokenErrors().includes(code)) {
               await strapi
                 .service("api::v1.user-fcm-token")
                 .deleteBadToken(userTokens[key]);
@@ -113,24 +118,6 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         return core.response(false);
       }
     }
-
-    // const phone = data.phone;
-    // console.log(phone);
-    // const result = await sendLocatorRequestNotification({
-    //   phone,
-    //   message:
-    //     owner.firstname +
-    //     " " +
-    //     owner.lastname +
-    //     " wants to view your location.",
-    //   userName: owner.firstname + " " + owner.lastname,
-    //   userPhone: phone,
-    // });
-
-    // console.log(result);
-    // if (result.errors || result.recipients == 0) {
-    //   return core.response(false);
-    // }
 
     return core.response(true);
   },
@@ -161,7 +148,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
   async updateCanLocate(ctx) {
     const user = ctx.state.user;
     const { data } = ctx.request.body;
-
+    console.log(data);
     if (!isObject(data)) {
       return ctx.badRequest('Missing "data" payload in the request body');
     }
@@ -181,6 +168,47 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
     } catch (error) {
       return ctx.badRequest(error, error.details);
     }
+  },
+
+  async respondToLocatorRequest(ctx) {
+    const owner = ctx.state.user;
+    const { data } = ctx.request.body;
+
+    if (data.phone) {
+      const { users, userTokens, userIds } = await strapi
+        .service("api::v1.user-fcm-token")
+        .getFCMTokensByUID([data.phone]);
+
+      if (userTokens.length > 0) {
+        //build message
+        let msg = this.fcm.defaultMessage;
+        msg.data.type = "general";
+        msg.data.payload = {
+          phone: data.phone,
+          name: owner.firstname + " " + owner.lastname,
+        };
+        msg.data.title = data.accept
+          ? "Location Request Granted!"
+          : "Location Request Denied!";
+        msg.data.body =
+          owner.firstname +
+          " " +
+          owner.lastname +
+          " (" +
+          owner.phone +
+          ")" +
+          (data.accept
+            ? " accepted your request to view their location."
+            : " denied your request to view their location.");
+
+        //send notification command to FCM service.
+        let response = await this.fcm.send({
+          tokens: userTokens,
+          data: msg,
+        });
+      }
+    }
+    return core.response(true);
   },
 
   async sanitize(result) {

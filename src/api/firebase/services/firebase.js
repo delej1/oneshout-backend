@@ -1,4 +1,7 @@
 module.exports = ({ strapi }) => ({
+  tokenErrors() {
+    return ["messaging/invalid-registration-token"];
+  },
   async getUserToken({ phone, userId }) {
     if (phone) {
       const user = await strapi
@@ -44,7 +47,7 @@ module.exports = ({ strapi }) => ({
     // data.image = data.notification.image;
     return {
       data: data.data,
-      notification: data.notification,
+      // notification: data.notification,
     };
   },
 
