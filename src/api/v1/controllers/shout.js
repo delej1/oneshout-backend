@@ -87,7 +87,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
       const shout = await this.sanitize(res);
 
-      console.log(shout);
+      // console.log(shout);
       const sent = await this.sendNotification(shout);
 
       await strapi.service(this.api).update(result.id, {
