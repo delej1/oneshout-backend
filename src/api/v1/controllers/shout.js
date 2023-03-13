@@ -202,11 +202,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
     const sendTo = entry.recipients.split(",");
     const name = entry.user.firstname + " " + entry.user.lastname;
 
-    const sent = await cancelShoutNotification({
-      message: name + " is safe now. Thanks for your concern.",
-      recipients: sendTo,
-    });
-
+    const sent = await sendCancelNotification(sendTo, name);
     return core.response({});
   },
 
