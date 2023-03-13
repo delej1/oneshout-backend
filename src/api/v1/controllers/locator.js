@@ -161,6 +161,9 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         data: {
           locateMe: data.canLocateMe,
           viewers: data.viewers.join(","),
+          lng: data.lng,
+          lat: data.lat,
+          lastSeen: new Date().toISOString(),
         },
       });
 

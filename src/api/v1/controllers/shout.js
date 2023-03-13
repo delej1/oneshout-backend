@@ -209,4 +209,49 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
     return core.response({});
   },
+
+  async sendCancelNotification(recipients, name) {
+    const { users, userTokens, userIds } = await strapi
+      .service("api::v1.user-fcm-token")
+      .getFCMTokensByUID(recipients);
+
+    // console.log(userTokens);
+    if (userTokens.length > 0) {
+      //build message
+      let msg = this.fcm.defaultMessage;
+      msg.data.type = "general";
+      msg.data.payload = { data: shout, type: "general" };
+      msg.data.title = "ONE SHOUT";
+      msg.data.body = name + " is safe now. Thanks for your concern.";
+
+      //send notification command to FCM service.
+      let response = await this.fcm.send({
+        tokens: userTokens,
+        data: msg,
+      });
+
+      // console.log(response);
+      //if this command returns with failures
+      if (response && response.failureCount > 0) {
+        //run through the result to find the failures
+        for (const [key, result] of Object.entries(response.results)) {
+          //if result.error is not null, then its an error
+          if (result.error != null) {
+            //get the error code
+            const code = result.error["errorInfo"].code;
+
+            //If this is a token error, then delete the token from database.
+            if (this.fcm.tokenErrors().includes(code)) {
+              await strapi
+                .service("api::v1.user-fcm-token")
+                .deleteBadToken(userTokens[key]);
+            }
+          }
+        }
+      }
+
+      return userTokens.length - response.failureCount;
+    }
+    return 0;
+  },
 }));

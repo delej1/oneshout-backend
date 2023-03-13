@@ -18,9 +18,9 @@ module.exports = createCoreService("api::v1.user-fcm-token", ({ strapi }) => ({
   async updateFcmToken(user, oldToken, newToken) {
     let done;
     let uid = user.uid;
-    console.log(uid);
-    console.log(oldToken);
-    console.log(newToken);
+    // console.log(uid);
+    // console.log(oldToken);
+    // console.log(newToken);
     // //find the user with this uid
     // let user = await strapi
     //   .query("plugin::users-permissions.user")
