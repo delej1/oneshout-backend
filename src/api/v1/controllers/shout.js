@@ -111,6 +111,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       .service("api::v1.user-fcm-token")
       .getFCMTokensByUID(shout.recipients.split(","));
 
+    // console.log(userTokens);
     if (userTokens.length > 0) {
       //build message
       let msg = this.fcm.defaultMessage;
@@ -125,6 +126,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         data: msg,
       });
 
+      // console.log(response);
       //if this command returns with failures
       if (response && response.failureCount > 0) {
         //run through the result to find the failures
