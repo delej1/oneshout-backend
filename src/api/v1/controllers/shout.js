@@ -209,6 +209,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         tokens: userTokens,
         data: msg,
       });
+
       if (response) {
         return userTokens.length - response.failureCount;
       }

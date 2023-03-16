@@ -97,6 +97,7 @@ module.exports = ({ strapi }) => ({
         priority: priority,
       })
       .then((response) => {
+        console.log(response);
         this.deleteBadTokens();
         return response;
       })

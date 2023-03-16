@@ -99,7 +99,6 @@ module.exports = createCoreService("api::v1.user-fcm-token", ({ strapi }) => ({
           tokens: { select: ["id", "token"] },
         },
       });
-
     for (const user of users) {
       if (user.tokens) {
         for (const token of user.tokens) {
