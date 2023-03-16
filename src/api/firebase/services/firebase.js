@@ -1,6 +1,29 @@
 module.exports = ({ strapi }) => ({
   tokenErrors() {
-    return ["messaging/invalid-registration-token"];
+    return [
+      "messaging/invalid-registration-token",
+      "messaging/registration-token-not-registered",
+    ];
+  },
+  async deleteBadTokens(response) {
+    if (response && response.failureCount > 0) {
+      //run through the result to find the failures
+      for (const [key, result] of Object.entries(response.results)) {
+        console.log(result);
+        //if result.error is not null, then its an error
+        if (result.error != null) {
+          //get the error code
+          const code = result.error["errorInfo"].code;
+
+          //If this is a token error, then delete the token from database.
+          if (this.tokenErrors().includes(code)) {
+            await strapi
+              .service("api::v1.user-fcm-token")
+              .deleteBadToken(userTokens[key]);
+          }
+        }
+      }
+    }
   },
   async getUserToken({ phone, userId }) {
     if (phone) {
@@ -74,6 +97,7 @@ module.exports = ({ strapi }) => ({
         priority: priority,
       })
       .then((response) => {
+        this.deleteBadTokens();
         return response;
       })
       .catch((error) => {

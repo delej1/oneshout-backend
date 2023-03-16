@@ -111,7 +111,6 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       .service("api::v1.user-fcm-token")
       .getFCMTokensByUID(shout.recipients.split(","));
 
-    console.log(users);
     if (userTokens.length > 0) {
       //build message
       let msg = this.fcm.defaultMessage;
@@ -126,27 +125,11 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         data: msg,
       });
 
-      console.log(response);
+      // console.log(response);
       //if this command returns with failures
-      if (response && response.failureCount > 0) {
-        //run through the result to find the failures
-        for (const [key, result] of Object.entries(response.results)) {
-          //if result.error is not null, then its an error
-          if (result.error != null) {
-            //get the error code
-            const code = result.error["errorInfo"].code;
-
-            //If this is a token error, then delete the token from database.
-            if (this.fcm.tokenErrors().includes(code)) {
-              await strapi
-                .service("api::v1.user-fcm-token")
-                .deleteBadToken(userTokens[key]);
-            }
-          }
-        }
+      if (response) {
+        return userTokens.length - response.failureCount;
       }
-
-      return userTokens.length - response.failureCount;
     }
     return 0;
   },
@@ -202,7 +185,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
     const sendTo = entry.recipients.split(",");
     const name = entry.user.firstname + " " + entry.user.lastname;
 
-    const sent = await sendCancelNotification(sendTo, name);
+    const sent = await this.sendCancelNotification(sendTo, name);
     return core.response({});
   },
 
@@ -211,12 +194,13 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       .service("api::v1.user-fcm-token")
       .getFCMTokensByUID(recipients);
 
-    // console.log(userTokens);
+    console.log(recipients);
+    console.log(userTokens);
     if (userTokens.length > 0) {
       //build message
       let msg = this.fcm.defaultMessage;
       msg.data.type = "general";
-      msg.data.payload = { data: shout, type: "general" };
+      msg.data.payload = { type: "general" };
       msg.data.title = "ONE SHOUT";
       msg.data.body = name + " is safe now. Thanks for your concern.";
 
@@ -225,28 +209,9 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
         tokens: userTokens,
         data: msg,
       });
-
-      // console.log(response);
-      //if this command returns with failures
-      if (response && response.failureCount > 0) {
-        //run through the result to find the failures
-        for (const [key, result] of Object.entries(response.results)) {
-          //if result.error is not null, then its an error
-          if (result.error != null) {
-            //get the error code
-            const code = result.error["errorInfo"].code;
-
-            //If this is a token error, then delete the token from database.
-            if (this.fcm.tokenErrors().includes(code)) {
-              await strapi
-                .service("api::v1.user-fcm-token")
-                .deleteBadToken(userTokens[key]);
-            }
-          }
-        }
+      if (response) {
+        return userTokens.length - response.failureCount;
       }
-
-      return userTokens.length - response.failureCount;
     }
     return 0;
   },
