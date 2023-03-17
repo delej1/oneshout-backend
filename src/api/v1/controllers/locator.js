@@ -148,7 +148,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
   async updateCanLocate(ctx) {
     const user = ctx.state.user;
     const { data } = ctx.request.body;
-    console.log(data);
+    // console.log(data);
     if (!isObject(data)) {
       return ctx.badRequest('Missing "data" payload in the request body');
     }
