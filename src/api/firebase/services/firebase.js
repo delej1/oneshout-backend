@@ -60,17 +60,25 @@ module.exports = ({ strapi }) => ({
       image: "app_icon",
     },
     notification: { title: "", body: "", image: "" },
+    apns: {
+      payload: {
+        aps: {
+          sound: "default",
+        },
+      },
+    },
   },
 
   formatMessage(data) {
     data.data.payload = JSON.stringify(data.data.payload);
     // data.data.payload = data.data.payload.toString();
-    // data.title = data.notification.title;
+    data.notification.title = data.data.title;
+    data.notification.body = data.data.body;
     // data.body = data.notification.body;
     // data.image = data.notification.image;
     return {
       data: data.data,
-      // notification: data.notification,
+      notification: data.notification,
     };
   },
 
