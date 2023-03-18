@@ -14,7 +14,7 @@ module.exports = ({ strapi }) => ({
         if (result.error != null) {
           //get the error code
           const code = result.error["errorInfo"].code;
-
+          console.log(code);
           //If this is a token error, then delete the token from database.
           if (this.tokenErrors().includes(code)) {
             await strapi
@@ -106,7 +106,7 @@ module.exports = ({ strapi }) => ({
       })
       .then((response) => {
         console.log(response);
-        this.deleteBadTokens();
+        this.deleteBadTokens(response);
         return response;
       })
       .catch((error) => {

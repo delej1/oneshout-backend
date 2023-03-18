@@ -32,7 +32,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       });
 
     let ids = result.map((a) => a.id);
-
+    console.log(data);
     //check users which allow me view their location.
     const locators = await strapi.db.query("api::v1.locator").findMany({
       where: { locateMe: true, viewers: { $contains: user.phone } },
@@ -58,7 +58,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
         };
       })
     );
-
+    console.log(response);
     return core.response(response);
   },
 
