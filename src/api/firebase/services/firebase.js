@@ -5,7 +5,7 @@ module.exports = ({ strapi }) => ({
       "messaging/registration-token-not-registered",
     ];
   },
-  async deleteBadTokens(response) {
+  async deleteBadTokens(response, tokens) {
     if (response && response.failureCount > 0) {
       //run through the result to find the failures
       for (const [key, result] of Object.entries(response.results)) {
@@ -19,7 +19,7 @@ module.exports = ({ strapi }) => ({
           if (this.tokenErrors().includes(code)) {
             await strapi
               .service("api::v1.user-fcm-token")
-              .deleteBadToken(userTokens[key]);
+              .deleteBadToken(tokens[key]);
           }
         }
       }
@@ -77,6 +77,7 @@ module.exports = ({ strapi }) => ({
     // data.body = data.notification.body;
     // data.image = data.notification.image;
     return {
+      ...data,
       data: data.data,
       notification: data.notification,
     };
@@ -106,7 +107,7 @@ module.exports = ({ strapi }) => ({
       })
       .then((response) => {
         console.log(response);
-        this.deleteBadTokens(response);
+        this.deleteBadTokens(response, tokens);
         return response;
       })
       .catch((error) => {
