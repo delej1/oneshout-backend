@@ -77,7 +77,7 @@ module.exports = ({ strapi }) => ({
     // data.body = data.notification.body;
     // data.image = data.notification.image;
     return {
-      ...data,
+      // ...data,
       data: data.data,
       notification: data.notification,
     };
