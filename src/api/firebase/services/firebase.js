@@ -8,7 +8,7 @@ module.exports = ({ strapi }) => ({
   async deleteBadTokens(response, tokens) {
     if (response && response.failureCount > 0) {
       //run through the result to find the failures
-      for (const [key, result] of Object.entries(response.results)) {
+      for (const [key, result] of Object.entries(response.responses)) {
         console.log(result);
         //if result.error is not null, then its an error
         if (result.error != null) {
@@ -80,6 +80,26 @@ module.exports = ({ strapi }) => ({
       // ...data,
       data: data.data,
       notification: data.notification,
+      android: {
+        notification: {
+          icon: "stock_ticker_update",
+          color: "#f45342",
+          sound: "alarm.mp3",
+        },
+      },
+      apns: {
+        headers: {
+          "apns-collapse-id": "solo_changed_administrator",
+          "content-available": "1",
+          "apns-priority": "10",
+        },
+        payload: {
+          aps: {
+            sound: "alarm",
+            badge: 12213123223,
+          },
+        },
+      },
     };
   },
 
@@ -101,10 +121,13 @@ module.exports = ({ strapi }) => ({
     // return;
     return await strapi.firebase
       .messaging()
-      .sendToDevice(tokens, this.formatMessage(data), {
-        contentAvailable: hasContent,
-        priority: priority,
-      })
+      .sendMulticast(
+        { tokens: tokens, ...this.formatMessage(data) }
+        // {
+        //   contentAvailable: hasContent,
+        //   priority: priority,
+        // }
+      )
       .then((response) => {
         console.log(response);
         this.deleteBadTokens(response, tokens);
