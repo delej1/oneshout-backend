@@ -32,7 +32,7 @@ const init = () => {
 const sendOTP = async ({ token, phone, firstname, channel }) => {
   const { axiosOption } = init();
 
-  await axios
+  return await axios
     .request({
       ...axiosOption,
       data: {
@@ -47,10 +47,11 @@ const sendOTP = async ({ token, phone, firstname, channel }) => {
       },
     })
     .then(function (response) {
-      console.log(response.data);
+      // console.log("response.data", response.data);
+      return response.data;
     })
     .catch(function (error) {
-      console.error(error.response);
+      console.log(error.response);
     });
 };
 

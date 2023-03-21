@@ -69,6 +69,46 @@ module.exports = {
     }
   },
 
+  /**
+   * Send OTP
+   * @param {*} ctx
+   */
+  async sendForgotPasswordOTP(ctx) {
+    const { phone, channel } = ctx.request.body;
+    const token = this.generateOTP();
+
+    try {
+      //save OTP first.
+      const result = await strapi
+        .query("plugin::users-permissions.user")
+        .update({
+          where: { uid: phone },
+          data: {
+            resetPasswordToken: token,
+          },
+        });
+
+      if (result) {
+        const vt = await sendOTP({
+          token,
+          phone: phone,
+          channel: channel ?? "sms",
+        });
+        console.log(vt);
+        // if (vt && vt.code == 200) return true;
+        return core.response({
+          code_sent: vt && vt.code == 200 ? true : false,
+        });
+      } else {
+        return ctx.badRequest(
+          "Your verification token was not sent. Please try again in a few minutes."
+        );
+      }
+    } catch (error) {
+      return ctx.badRequest("There was an error sending your code.");
+    }
+  },
+
   async pushOTP({ id, token, phone, channel }) {
     //save OTP first.
     const result = await strapi.query("plugin::users-permissions.user").update({
@@ -107,6 +147,34 @@ module.exports = {
           },
         });
       return core.response({ valid: result.confirmed });
+    } catch (error) {
+      return ctx.badRequest("There was an error verifying your code.");
+    }
+  },
+
+  async verifyPasswordResetOTP(ctx) {
+    const { phone, token } = ctx.request.body;
+
+    try {
+      const user_exists = await strapi
+        .query("plugin::users-permissions.user")
+        .findOne({
+          where: { phone: phone, resetPasswordToken: token },
+        });
+
+      if (!user_exists) {
+        return ctx.badRequest("Your phone number or token does not exist.");
+      }
+
+      const result = await strapi
+        .query("plugin::users-permissions.user")
+        .update({
+          where: { uid: phone },
+          data: {
+            resetPasswordToken: null,
+          },
+        });
+      return core.response({ valid: result != null });
     } catch (error) {
       return ctx.badRequest("There was an error verifying your code.");
     }
