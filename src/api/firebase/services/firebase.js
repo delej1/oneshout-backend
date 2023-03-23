@@ -107,7 +107,7 @@ module.exports = ({ strapi }) => ({
    */
   async send({ tokens, data, priority = "high", hasContent = true }) {
     // console.log("Sending message to device...");
-    // console.log(this.formatMessage(data));
+    console.log(this.formatMessage(data));
     // return;
     return await strapi.firebase
       .messaging()
