@@ -113,12 +113,16 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
     if (userTokens.length > 0) {
       //build message
-      let msg = this.fcm.defaultMessage;
+      let msg = this.fcm.defaultMessage();
       msg.data.type = "shout-help";
       msg.data.payload = { data: shout, type: "shout-help" };
       msg.data.title = "ALERT!";
       msg.data.body = shout.message;
 
+      //android settings.
+      msg.android.notification.channelId = "com.ebs.shout";
+      //ios settings
+      msg.apns.payload.aps.sound = "alarm.caf";
       //send notification command to FCM service.
       let response = await this.fcm.send({
         tokens: userTokens,
@@ -194,11 +198,11 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       .service("api::v1.user-fcm-token")
       .getFCMTokensByUID(recipients);
 
-    console.log(recipients);
-    console.log(userTokens);
+    // console.log(recipients);
+    // console.log(userTokens);
     if (userTokens.length > 0) {
       //build message
-      let msg = this.fcm.defaultMessage;
+      let msg = this.fcm.defaultMessage();
       msg.data.type = "general";
       msg.data.payload = { type: "general" };
       msg.data.title = "ONE SHOUT";

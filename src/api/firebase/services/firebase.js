@@ -50,50 +50,47 @@ module.exports = ({ strapi }) => ({
     }
   },
 
-  defaultMessage: {
-    data: {
-      type: "general",
-      payload: {},
-      style: "DEFAULT",
-      title: "",
-      body: "",
-      image: "app_icon",
-    },
-    notification: { title: "", body: "", image: "" },
-    apns: {
-      payload: {
-        aps: {
-          sound: "default",
-        },
-      },
-    },
-  },
-
-  formatMessage(data) {
-    data.data.payload = JSON.stringify(data.data.payload);
-    // data.data.payload = data.data.payload.toString();
-    data.notification.title = data.data.title;
-    data.notification.body = data.data.body;
-    // data.body = data.notification.body;
-    // data.image = data.notification.image;
+  defaultMessage() {
     return {
-      // ...data,
-      data: data.data,
-      notification: data.notification,
+      data: {
+        type: "general",
+        payload: {},
+        style: "DEFAULT",
+        title: "",
+        body: "",
+        image: "app_icon",
+      },
+      notification: { title: "", body: "", image: "" },
       android: {
         notification: {
-          icon: "stock_ticker_update",
+          icon: "ic_notification_icon",
           color: "#f45342",
-          sound: "alarm",
+          sound: "alarm.mp3",
+          channelId: "com.ebs.shout.default",
         },
       },
       apns: {
         payload: {
           aps: {
-            sound: "alarm.mp3",
+            sound: "default",
           },
         },
       },
+    };
+  },
+
+  formatMessage(msg) {
+    msg.data.payload = JSON.stringify(msg.data.payload);
+    // data.data.payload = data.data.payload.toString();
+    msg.notification.title = msg.data.title;
+    msg.notification.body = msg.data.body;
+    // data.body = data.notification.body;
+    // data.image = data.notification.image;
+    console.log(msg.apns);
+    return {
+      ...msg,
+      // data: data.data,
+      // notification: data.notification,
     };
   },
 
@@ -110,8 +107,7 @@ module.exports = ({ strapi }) => ({
    */
   async send({ tokens, data, priority = "high", hasContent = true }) {
     // console.log("Sending message to device...");
-    console.log(this.formatMessage(data));
-    // console.log(tokens);
+    // console.log(this.formatMessage(data));
     // return;
     return await strapi.firebase
       .messaging()
@@ -123,7 +119,7 @@ module.exports = ({ strapi }) => ({
         // }
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         this.deleteBadTokens(response, tokens);
         return response;
       })
