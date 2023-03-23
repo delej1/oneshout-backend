@@ -180,6 +180,29 @@ module.exports = {
     }
   },
 
+  async changePassword(ctx) {
+    const { phone, password } = ctx.request.body;
+    if (!password) {
+      return ctx.badRequest("Password is required.");
+    }
+
+    const hashPassword = await this.hashPassword(password);
+
+    try {
+      const result = await strapi
+        .query("plugin::users-permissions.user")
+        .update({
+          where: { uid: phone },
+          data: {
+            password: hashPassword,
+          },
+        });
+      return core.response({ done: result != null });
+    } catch (error) {
+      return ctx.badRequest("An error occurred while resetting your password.");
+    }
+  },
+
   async register(ctx) {
     let user;
     let jwt;

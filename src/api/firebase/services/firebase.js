@@ -84,19 +84,13 @@ module.exports = ({ strapi }) => ({
         notification: {
           icon: "stock_ticker_update",
           color: "#f45342",
-          sound: "alarm.mp3",
+          sound: "alarm",
         },
       },
       apns: {
-        headers: {
-          "apns-collapse-id": "solo_changed_administrator",
-          "content-available": "1",
-          "apns-priority": "10",
-        },
         payload: {
           aps: {
-            sound: "alarm",
-            badge: 12213123223,
+            sound: "alarm.mp3",
           },
         },
       },

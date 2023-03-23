@@ -44,6 +44,12 @@ module.exports = {
     },
     {
       // Path defined with a URL parameter
+      method: "POST",
+      path: "/auth/change-password",
+      handler: "auth.changePassword",
+    },
+    {
+      // Path defined with a URL parameter
       method: "DELETE",
       path: "/auth/destroy/:id",
       handler: "auth.destroyUser",
