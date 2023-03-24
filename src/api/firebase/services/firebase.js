@@ -60,7 +60,11 @@ module.exports = ({ strapi }) => ({
         body: "",
         image: "app_icon",
       },
-      notification: { title: "", body: "", image: "" },
+      notification: {
+        title: "",
+        body: "",
+        image: "https://oneshout-api.herokuapp.com/uploads/icon_e74a389b7b.png",
+      },
       android: {
         notification: {
           icon: "ic_notification_icon",
