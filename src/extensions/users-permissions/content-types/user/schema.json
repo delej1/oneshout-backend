@@ -104,6 +104,12 @@
     },
     "uid": {
       "type": "string"
+    },
+    "subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::v1.subscription",
+      "mappedBy": "user"
     }
   }
 }

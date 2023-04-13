@@ -1,3 +1,8 @@
 {
-  "cSpell.words": ["firstname", "lastname", "Sendchamp"]
+  "cSpell.words": [
+    "firstname",
+    "lastname",
+    "Sendchamp"
+  ],
+  "prettier.quoteProps": "preserve"
 }
