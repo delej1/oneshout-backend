@@ -6,5 +6,13 @@ module.exports = {
       handler: "subscription.verifyPurchase",
       config: { policies: [], middlewares: [] },
     },
+    {
+      method: "GET",
+      path: "/v1/subscriptions/import-subscribers",
+      handler: "subscription.importSubscribers",
+      config: {
+        policies: [],
+      },
+    },
   ],
 };

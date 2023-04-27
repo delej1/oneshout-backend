@@ -18,8 +18,16 @@ module.exports = {
     "country",
     "blocked",
     "confirmed",
+    "type",
   ],
-  populate: { role: { select: ["type"] } },
+  populate: {
+    role: { select: ["type"] },
+    subscriptions: {
+      select: ["id", "offering", "status", "stop"],
+      orderBy: ["id"],
+      limit: 1,
+    },
+  },
   generateOTP() {
     return tokenCodes.generate({
       length: 5,
@@ -258,7 +266,7 @@ module.exports = {
       }
 
       //create user
-      user = await this._createUser(qp);
+      user = await this.createUser(qp);
 
       console.log("user", user);
 
@@ -304,7 +312,7 @@ module.exports = {
    * @param {String} uid
    * @returns [User]
    */
-  async _createUser({ email, phone, firstname, lastname, country, password }) {
+  async createUser({ email, phone, firstname, lastname, country, password }) {
     // creating a new user with firebase information
     const pluginStore = await strapi.store({
       environment: "",

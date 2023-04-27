@@ -12,10 +12,45 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "user": {
+    "subscribers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "subscriptions"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "group",
+        "single"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "active",
+        "expired"
+      ]
+    },
+    "start": {
+      "type": "datetime"
+    },
+    "stop": {
+      "type": "datetime"
+    },
+    "offering": {
+      "type": "enumeration",
+      "enum": [
+        "sub_1_month",
+        "sub_6_months",
+        "sub_12_months"
+      ]
+    },
+    "group": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
+      "target": "api::v1.corporate-profile",
       "inversedBy": "subscriptions"
     }
   }

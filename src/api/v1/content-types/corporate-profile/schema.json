@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "corporate_profiles",
+  "info": {
+    "singularName": "corporate-profile",
+    "pluralName": "corporate-profiles",
+    "displayName": "Corporate-Profile",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "country": {
+      "type": "customField",
+      "customField": "plugin::country-select.country"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "subscriptions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::v1.subscription",
+      "mappedBy": "group"
+    }
+  }
+}

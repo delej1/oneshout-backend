@@ -10,6 +10,10 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::v1.subscription", ({ strapi }) => ({
   api: "api::v1.subscription",
+  async importSubscribers(data) {
+    console.log("dataaza");
+    return "buzz";
+  },
   async verifyPurchase(ctx) {
     const { data } = ctx.request.body;
     const { store, receipt } = data;

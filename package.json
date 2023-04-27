@@ -9,7 +9,6 @@
     "build": "strapi build",
     "strapi": "strapi"
   },
-  "devDependencies": {},
   "dependencies": {
     "@onesignal/node-onesignal": "^1.0.0-beta9",
     "@strapi/plugin-i18n": "4.8.1",
@@ -18,12 +17,16 @@
     "@tochie/vscore": "^0.0.5",
     "api": "^5.0.7",
     "firebase-admin": "^11.5.0",
+    "fs": "^0.0.1-security",
+    "libphonenumber-js": "^1.10.28",
     "moment": "^2.29.4",
     "node-apple-receipt-verify": "^1.12.1",
     "pg": "8.6.0",
+    "read-excel-file": "^5.6.1",
     "referral-codes": "^2.0.3",
     "sendchamp-sdk": "^1.0.8",
-    "socket.io": "^4.6.0"
+    "socket.io": "^4.6.0",
+    "strapi-plugin-country-select": "^1.0.2"
   },
   "author": {
     "name": "Tochie Daniels"

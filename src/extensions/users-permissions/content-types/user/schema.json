@@ -107,9 +107,17 @@
     },
     "subscriptions": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::v1.subscription",
-      "mappedBy": "user"
+      "mappedBy": "subscribers"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "group",
+        "private"
+      ],
+      "default": "private"
     }
   }
 }
