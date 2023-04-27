@@ -101,19 +101,19 @@ const HomePage = () => {
                 Dashboard
               </SubNavLink>
 
-              <SubNavSection collapsable label="Subscriptions">
+              {/* <SubNavSection collapsable label="Subscriptions">
                 {reports.map((link) => (
                   <SubNavLink to={link.to} key={link.id}>
                     {link.label}
                   </SubNavLink>
                 ))}
-              </SubNavSection>
+              </SubNavSection> */}
             </SubNavSections>
           </SubNav>
         }
       >
         <>
-          <HeaderLayout
+          {/* <HeaderLayout
             // primaryAction={<Button startIcon={<Plus />}>Add an entry</Button>}
             secondaryAction={
               // <Button variant="tertiary" startIcon={<Refresh />}></Button>
@@ -125,8 +125,8 @@ const HomePage = () => {
             title="Corporate Subscription"
             subtitle="..."
             as="h2"
-          />
-          <Box padding={8}>
+          /> */}
+          {/* <Box padding={8}>
             <GridLayout>
               <Box
                 padding={4}
@@ -151,7 +151,7 @@ const HomePage = () => {
                 <Typography textColor="neutral500">Guests</Typography>
               </Box>
             </GridLayout>
-          </Box>
+          </Box> */}
         </>
       </Layout>
     </Box>
