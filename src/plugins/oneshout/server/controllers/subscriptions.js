@@ -31,6 +31,7 @@ module.exports = ({ strapi }) => ({
               ...u,
               password: u.phone,
               country: number.country,
+              type: "group",
             });
           }
         }

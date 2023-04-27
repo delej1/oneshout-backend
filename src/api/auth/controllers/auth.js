@@ -23,8 +23,9 @@ module.exports = {
   populate: {
     role: { select: ["type"] },
     subscriptions: {
-      select: ["id", "offering", "status", "stop"],
-      orderBy: ["id"],
+      select: ["id", "category", "offering", "status", "start", "stop"],
+      populate: { group: { select: ["name"] } },
+      orderBy: { stop: "desc" },
       limit: 1,
     },
   },
@@ -203,6 +204,7 @@ module.exports = {
           where: { uid: phone },
           data: {
             password: hashPassword,
+            confirmed: true,
           },
         });
       return core.response({ done: result != null });
@@ -215,7 +217,7 @@ module.exports = {
     let user;
     let jwt;
 
-    const { firstname, lastname, phone, email, country, password } =
+    const { firstname, lastname, phone, email, country, password, isGroup } =
       ctx.request.body;
 
     if (!phone) {
@@ -249,7 +251,7 @@ module.exports = {
         email,
         password,
       };
-      console.log(qp);
+      // console.log(qp);
       //check for user with phone
       const user_exists = await strapi
         .query("plugin::users-permissions.user")
@@ -312,7 +314,15 @@ module.exports = {
    * @param {String} uid
    * @returns [User]
    */
-  async createUser({ email, phone, firstname, lastname, country, password }) {
+  async createUser({
+    email,
+    phone,
+    firstname,
+    lastname,
+    country,
+    password,
+    type = "private",
+  }) {
     // creating a new user with firebase information
     const pluginStore = await strapi.store({
       environment: "",
@@ -341,6 +351,7 @@ module.exports = {
     params.confirmed = false;
     params.password = await this.hashPassword(password);
     params.uid = phone;
+    params.type = type;
 
     //create new user
     const user = await strapi.query("plugin::users-permissions.user").create({
@@ -479,6 +490,7 @@ module.exports = {
    * @param {User} user
    */
   _sanitizeUser(user) {
+    const sub = user.subscriptions.length > 0 ? user.subscriptions[0] : null;
     return {
       id: user.id,
       email: user.email,
@@ -489,6 +501,9 @@ module.exports = {
       lastname: user.lastname,
       country: user.country,
       role: user.role.type,
+      type: user.type,
+      subscription: sub && { ...sub, group: sub.group.name },
+      hasValidSubscription: sub && sub.status == "active" ? true : false,
     };
   },
 
