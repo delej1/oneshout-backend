@@ -502,7 +502,7 @@ module.exports = {
       country: user.country,
       role: user.role.type,
       type: user.type,
-      subscription: sub && { ...sub, group: sub.group.name },
+      subscription: sub && { ...sub, group: sub.group && sub.group.name },
       hasValidSubscription: sub && sub.status == "active" ? true : false,
     };
   },
