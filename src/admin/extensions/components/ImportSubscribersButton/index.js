@@ -71,6 +71,7 @@ const ImportSubscribersButton = () => {
   const [uploadErrors, setUploadErrors] = useState([]);
   const [uploadResults, setUploadResults] = useState([]);
 
+  // console.log(useCMEditViewDataManager());
   function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -309,7 +310,10 @@ const ImportSubscribersButton = () => {
               gap={2}
             >
               <Button
-                onClick={() => setIsDialogVisible(false)}
+                onClick={() => {
+                  window.location.reload();
+                  setIsDialogVisible(false);
+                }}
                 variant="default"
               >
                 Ok
