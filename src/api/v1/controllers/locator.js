@@ -74,6 +74,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
       //build message
       let msg = this.fcm.defaultMessage;
       console.log(msg);
+      console.log(msg.data);
       msg.data.type = "request-location";
       msg.data.payload = {
         data: {
