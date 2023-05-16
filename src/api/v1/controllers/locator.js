@@ -72,7 +72,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
 
     if (userTokens.length > 0) {
       //build message
-      let msg = this.fcm.defaultMessage;
+      let msg = this.fcm.defaultMessage();
       console.log(msg);
       console.log(msg.data);
       msg.data.type = "request-location";
@@ -186,7 +186,7 @@ module.exports = createCoreController("api::v1.locator", ({ strapi }) => ({
 
       if (userTokens.length > 0) {
         //build message
-        let msg = this.fcm.defaultMessage;
+        let msg = this.fcm.defaultMessage();
         msg.data.type = "general";
         msg.data.payload = {
           phone: data.phone,
