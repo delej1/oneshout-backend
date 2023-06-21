@@ -70,7 +70,7 @@ module.exports = ({ strapi }) => ({
           icon: "ic_notification_icon",
           color: "#f45342",
           sound: "alarm.mp3",
-          channelId: "com.ebs.shout.default",
+          channelId: "com.ebs.shout.default.channel",
         },
       },
       apns: {
