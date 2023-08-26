@@ -157,7 +157,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
             }
           : null,
         filters: {
-          user: { $ne: null },
+          $not: { user: null },
           recipients: { $contains: owner.phone.trim() },
         },
         populate: {
