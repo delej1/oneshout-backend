@@ -156,7 +156,10 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
               page: paging.page,
             }
           : null,
-        filters: { recipients: { $contains: owner.phone.trim() } },
+        filters: {
+          user: { $ne: null },
+          recipients: { $contains: owner.phone.trim() },
+        },
         populate: {
           user: { select: ["id", "firstname", "lastname", "phone"] },
           location: { select: ["coordinates"] },
@@ -165,7 +168,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
 
       if (results) {
         let shouts = await this.sanitize(results);
-        console.log(shouts);
+        // console.log(shouts);
         return core.response(shouts, pagination);
       } else {
         return core.response([]);
