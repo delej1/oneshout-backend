@@ -214,7 +214,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       //android settings.
       msg.android.notification.channelId = "com.ebs.shout.channel";
       //ios settings
-      msg.apns.payload.aps.sound = "alarm.caf";
+      msg.apns.payload.aps.sound = "safe.caf";
 
       //send notification command to FCM service.
       let response = await this.fcm.send({
