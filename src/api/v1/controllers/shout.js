@@ -120,7 +120,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       msg.data.body = shout.message;
 
       //android settings.
-      msg.android.notification.channelId = "com.ebs.shout.channel";
+      msg.android.notification.channelId = "com.ebs.shout.channel.one";
       //ios settings
       msg.apns.payload.aps.sound = "alarm.caf";
       //send notification command to FCM service.
@@ -212,7 +212,7 @@ module.exports = createCoreController("api::v1.shout", ({ strapi }) => ({
       msg.data.body = name + " is safe now. Thanks for your concern.";
 
       //android settings.
-      msg.android.notification.channelId = "com.ebs.shout.channel";
+      msg.android.notification.channelId = "com.ebs.shout.channel.two";
       //ios settings
       msg.apns.payload.aps.sound = "safe.caf";
 
